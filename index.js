@@ -37,8 +37,8 @@ client.on('message', async message => {
 
     if (!message.content.startsWith(config.prefix) || message.author.bot) return
     if (command === "dq") {
-        message.channel.send("I have started this process in your DM's. Type `cancel` to cancel")
-        message.author.send(questions.firstQuestion).then(msg => {
+        message.channel.send("[Daily quest] alright let's start. Type `cancel` to cancel")
+        message.channel.send(questions.firstQuestion).then(msg => {
             const filter1 = m => m.author.id === message.author.id
             msg.channel.awaitMessages(filter1, {
                 time: 5 * 60000,
@@ -46,7 +46,7 @@ client.on('message', async message => {
             }).then(messages => {
                 let msg1 = messages.first().content
                 if(msg1.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                message.author.send(questions.secondQuestion).then(msg => {
+                message.channel.send(questions.secondQuestion).then(msg => {
                     const filter1 = m => m.author.id === message.author.id
                     msg.channel.awaitMessages(filter1, {
                         time: 5 * 60000,
@@ -54,7 +54,7 @@ client.on('message', async message => {
                     }).then(messages => {
                         let msg2 = messages.first().content
                         if(msg2.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                        message.author.send(questions.thirdQuestion).then(msg => {
+                        message.channel.send(questions.thirdQuestion).then(msg => {
                             const filter1 = m => m.author.id === message.author.id
                             msg.channel.awaitMessages(filter1, {
                                 time: 5 * 60000,
@@ -62,7 +62,7 @@ client.on('message', async message => {
                             }).then(messages => {
                                 let msg3 = messages.first().content
                                 if(msg3.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                message.author.send(questions.fourthQuestion).then(msg => {
+                                message.channel.send(questions.fourthQuestion).then(msg => {
                                     const filter1 = m => m.author.id === message.author.id
                                     msg.channel.awaitMessages(filter1, {
                                         time: 5 * 60000,
@@ -70,7 +70,7 @@ client.on('message', async message => {
                                     }).then(messages => {
                                         let msg4 = messages.first().content
                                         if(msg4.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                        message.author.send(questions.fifthQuestion).then(msg => {
+                                        message.channel.send(questions.fifthQuestion).then(msg => {
                                             const filter1 = m => m.author.id === message.author.id
                                             msg.channel.awaitMessages(filter1, {
                                                 time: 5 * 60000,
@@ -78,7 +78,7 @@ client.on('message', async message => {
                                             }).then(messages => {
                                                 let msg5 = messages.first().content
                                                 if(msg5.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                                message.author.send(questions.sixthQuestion).then(msg => {
+                                                message.channel.send(questions.sixthQuestion).then(msg => {
                                                     const filter1 = m => m.author.id === message.author.id
                                                     msg.channel.awaitMessages(filter1, {
                                                         time: 5 * 60000,
@@ -86,7 +86,7 @@ client.on('message', async message => {
                                                     }).then(messages => {
                                                 let msg6 = messages.first().content
                                                 if(msg6.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                                message.author.send("Daily quest posted! thanks for contributing").then(msg => {
+                                                message.channel.send("Daily quest posted! thanks for contributing").then(msg => {
                                                     const estprice = parseInt(msg3) + parseInt(msg4);
                                                     const User = client.users.cache.get(message.author.id); 
                                                     RiseDrop = ""
@@ -203,8 +203,8 @@ client.on('message', async message => {
     }
 
     if (command === "cotd") {
-        message.channel.send("I have started this process in your DM's. Type `cancel` to cancel")
-        message.author.send(cotdquestions.firstQuestion).then(msg => {
+        message.channel.send("[COTD] alright let's start. Type `cancel` to cancel")
+        message.channel.send(cotdquestions.firstQuestion).then(msg => {
             const filter1 = m => m.author.id === message.author.id
             msg.channel.awaitMessages(filter1, {
                 time: 5 * 60000,
@@ -212,7 +212,7 @@ client.on('message', async message => {
             }).then(messages => {
                 let msg1 = messages.first().content
                 if(msg1.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                message.author.send(cotdquestions.secondQuestion).then(msg => {
+                message.channel.send(cotdquestions.secondQuestion).then(msg => {
                     const filter1 = m => m.author.id === message.author.id
                     msg.channel.awaitMessages(filter1, {
                         time: 5 * 60000,
@@ -220,7 +220,7 @@ client.on('message', async message => {
                     }).then(messages => {
                         let msg2 = messages.first().content
                         if(msg2.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                        message.author.send(cotdquestions.thirdQuestion).then(msg => {
+                        message.channel.send(cotdquestions.thirdQuestion).then(msg => {
                             const filter1 = m => m.author.id === message.author.id
                             msg.channel.awaitMessages(filter1, {
                                 time: 5 * 60000,
@@ -228,7 +228,7 @@ client.on('message', async message => {
                             }).then(messages => {
                                 let msg3 = messages.first().content
                                 if(msg3.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                message.author.send(cotdquestions.fourthQuestion).then(msg => {
+                                message.channel.send(cotdquestions.fourthQuestion).then(msg => {
                                     const filter1 = m => m.author.id === message.author.id
                                     msg.channel.awaitMessages(filter1, {
                                         time: 5 * 60000,
@@ -236,7 +236,7 @@ client.on('message', async message => {
                                     }).then(messages => {
                                         let msg4 = messages.first().content
                                         if(msg4.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                        message.author.send(cotdquestions.fifthQuestion).then(msg => {
+                                        message.channel.send(cotdquestions.fifthQuestion).then(msg => {
                                             const filter1 = m => m.author.id === message.author.id
                                             msg.channel.awaitMessages(filter1, {
                                                 time: 5 * 60000,
@@ -244,7 +244,7 @@ client.on('message', async message => {
                                             }).then(messages => {
                                                 let msg5 = messages.first().content
                                                 if(msg5.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                                message.author.send(cotdquestions.sixthQuestion).then(msg => {
+                                                message.channel.send(cotdquestions.sixthQuestion).then(msg => {
                                                     const filter1 = m => m.author.id === message.author.id
                                                     msg.channel.awaitMessages(filter1, {
                                                         time: 5 * 60000,
@@ -252,7 +252,7 @@ client.on('message', async message => {
                                                     }).then(messages => {
                                                 let msg6 = messages.first().content
                                                 if(msg6.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                                message.author.send("Daily quest posted! thanks for contributing").then(msg => {
+                                                message.channel.send("Catch of the day posted! thanks for contributing").then(msg => {
                                                     const estprice = parseInt(msg3) + parseInt(msg4);
                                                     const User = client.users.cache.get(message.author.id); 
                                                     RiseDrop = ""
