@@ -31,7 +31,6 @@ client.on('message', async message => {
         thirdQuestion: "what is the perfect variant fish price (per world lock)? [must be a number]",
         fourthQuestion:  "what is the normal variant fish price (per world lock)? [must be a number]",
         fifthQuestion: "is the turnout high or low? [high/low]",
-        sixthQuestion: "What is it obtained with?",
     }
 
 
@@ -244,14 +243,6 @@ client.on('message', async message => {
                                             }).then(messages => {
                                                 let msg5 = messages.first().content
                                                 if(msg5.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                                message.channel.send(cotdquestions.sixthQuestion).then(msg => {
-                                                    const filter1 = m => m.author.id === message.author.id
-                                                    msg.channel.awaitMessages(filter1, {
-                                                        time: 5 * 60000,
-                                                        max: 1
-                                                    }).then(messages => {
-                                                let msg6 = messages.first().content
-                                                if(msg6.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
                                                 message.channel.send("Catch of the day posted! thanks for contributing").then(msg => {
                                                     const estprice = parseInt(msg3) + parseInt(msg4);
                                                     const User = client.users.cache.get(message.author.id); 
@@ -279,7 +270,7 @@ client.on('message', async message => {
                                                     }
                                                     else if(msg2 == "no")
                                                     {
-                                                        Trainable = "<:Untrainable:1035822603031556137> Untrainable"
+                                                        Trainable = "<:Untrainable:1035822603031556137> Not Trainable"
                                                     }
                                                     else
                                                     {
@@ -288,41 +279,65 @@ client.on('message', async message => {
 
 
                                                     fishInput = msg1.toLowerCase();
+                                                    fishLink = ""
+                                                    fishBaits = ""
 
                                                     //fish presets
                                                     if(fishInput == "bass")
                                                     {
                                                         todaysFish = "<:Bass:1035859714774405121> Bass";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Bass";
+                                                        fishBaits = "<:Shinyflashything:1036315367779340403> <:Wigglyworm:1036315422208823297> <:Salmonegg:1036315383289872494> <:Fishingfly:1036315514231853137> <:Whizmogizmo:1036317202678304848>";
                                                     }
 
                                                     else if(fishInput == "sunfish")
                                                     {
                                                         todaysFish = "<:Sunfish:1035859843162062908> Sunfish";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Sunfish";
+                                                        fishBaits = "<:Shinyflashything:1036315367779340403> <:Fishingfly:1036315514231853137> <:Shrimplure:1036315402977947738>";
+                                                    }
+
+                                                    else if(fishInput == "whale")
+                                                    {
+                                                        todaysFish = "<:GTWhale:1036357304632746064> Whale";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Whale";
+                                                        fishBaits = "<:Shrimplure:1036315402977947738> <:Whizmogizmo:1036317202678304848>";
                                                     }
 
                                                     else if(fishInput == "gar")
                                                     {
                                                         todaysFish = "<:Gar:1035860204241297408> Gar";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Gar";
+                                                        fishBaits = "<:Salmonegg:1036315383289872494> <:Fishingfly:1036315514231853137> <:Shrimplure:1036315402977947738> <:Whizmogizmo:1036317202678304848>";
                                                     }
 
                                                     else if(fishInput == "mahi mahi")
                                                     {
                                                         todaysFish = "<:Mahimahi:1035862077581045840> Mahi Mahi";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Mahi_Mahi";
+                                                        fishBaits = "<:Wigglyworm:1036315422208823297> <:Shrimplure:1036315402977947738> <:Whizmogizmo:1036317202678304848>";
                                                     }
 
-                                                    else if(fishInput == "mahi mahi")
+                                                    else if(fishInput == "goldfish")
                                                     {
-                                                        todaysFish = "<:Mahimahi:1035862077581045840> Mahi Mahi";
+                                                        todaysFish = "<:Goldfish:1036356801190436914> Goldfish";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Goldfish";
+                                                        fishBaits = "<:Shinyflashything:1036315367779340403> <:Wigglyworm:1036315422208823297> <:Whizmogizmo:1036317202678304848>";
                                                     }
 
                                                     else if(fishInput == "dogfish")
                                                     {
                                                         todaysFish = "<:Dogfish:1035862356657442878> Dogfish";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Dogfish";
+                                                        fishBaits = "<:Salmonegg:1036315383289872494> <:Fishingfly:1036315514231853137> <:Whizmogizmo:1036317202678304848>";
                                                     }
 
+                                                    //defaults
                                                     else
                                                     {
                                                         todaysFish = msg1;
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Fishes";
+                                                        fishBaits = "<:cotd:1036315453787734056>";
                                                     }
 
                                                     console.log(`[IE_LOG] COTD POST DETECTED\nExecuter = ${User.tag} \nFish = ${fishInput}\nDate = ${currentdate.toLocaleDateString()} at ${currentdate.toLocaleTimeString()}\n`)
@@ -333,14 +348,15 @@ client.on('message', async message => {
                                                             .setAuthor('Catch-Of-The-Day announcement | click here to report a problem', 'https://cdn.discordapp.com/attachments/986649997128904775/1035866110983151636/1035817530972975167.webp', 'https://ptb.discord.com/channels/571992648190263317/994294684874715146/1001014705655124039')
                                                             .setURL('https://ptb.discord.com/channels/571992648190263317/994294684874715146/1001014705655124039')
                                                             .setDescription(``)
-                                                            .addField("Today\s COTD is:", todaysFish, true)
+                                                            .addField("Today\s COTD is:", `[${todaysFish}](${fishLink})`, true)
                                                             .addField("Today\s Date:", currentdate.toLocaleDateString(), true)
                                                             .addField("Estimated fish price:", `Normal lb for ${msg4} / <:WL:1035605013222924288>\nPerfect lb for ${msg3} / <:WL:1035605013222924288>`, true)
-                                                            .addField("Obtainable with",msg6, true)
+                                                            .addField("Obtainable with",fishBaits, true)
                                                             .addField(`Status of fish`, `${Trainable}`,true)
                                                             .addField("Rate of demand", RiseDrop, true)
+                                                            .addField("<a:bell:1036284896253063198> Important Subjects:", `[**Fishes info**](https://growtopia.fandom.com/wiki/Fishes) | [**Fishing Rods guideline**](https://growtopia.fandom.com/wiki/Guide:Fishing/Fishing_Rods) | [**Fish Nutrition**](https://growtopia.fandom.com/wiki/Guide:Fish_Training)`, true)
                                                             .setTimestamp()
-                                                            .setFooter(`The Lost Nemo! | generated by ${User.tag}`, "https://media.discordapp.net/attachments/986677752314859526/999442036342145097/Growpedia.png?width=868&height=905")
+                                                            .setFooter(`The price of fish is subject to change based on demand | generated by ${User.tag}`, "https://media.discordapp.net/attachments/986677752314859526/999442036342145097/Growpedia.png?width=868&height=905")
                                                     )//.then(message.crosspost()).catch(console.error());
                                                 })
                                             })
@@ -353,8 +369,6 @@ client.on('message', async message => {
                 })
             })
         })
-    })
-})
     }
 
     if(command==="ping")
