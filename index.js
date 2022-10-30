@@ -91,6 +91,8 @@ client.on('message', async message => {
                                                     const User = client.users.cache.get(message.author.id); 
                                                     RiseDrop = ""
                                                     roleDay = ""
+                                                    price1 = ""
+                                                    price2 = ""
                                                     risedropInput = msg5.toLowerCase();
                                                     roledayInput = msg6.toLowerCase();
 
@@ -121,7 +123,7 @@ client.on('message', async message => {
 
                                                     else if(roledayInput == "farmer")
                                                     {
-                                                        roleDay = "<:zgtfarmer:1035870186106011659> Farmer"
+                                                        roleDay = "<:farmer:1035870186106011659> Farmer"
                                                     }
 
                                                     else if(roledayInput == "cooking" || roledayInput == "chef")
@@ -131,7 +133,7 @@ client.on('message', async message => {
 
                                                     else if(roledayInput == "fish" || roledayInput == "fishing")
                                                     {
-                                                        roleDay = "<:zgtfishing:862710428035055687> Fishing"
+                                                        roleDay = "<:fishing:1036258778527584296> Fishing"
                                                     }
 
                                                     else if(roledayInput == "star" || roledayInput == "startopia")
@@ -149,6 +151,27 @@ client.on('message', async message => {
                                                         roleDay = "<:joat:1035871083296989324> Jack of all trades!"
                                                     }
 
+                                                    if(msg3 == "1")
+                                                    {
+                                                        price1 = "World lock"
+                                                    }
+
+                                                    else
+                                                    {
+                                                        price1 = "World locks"
+
+                                                    }
+
+                                                    if(msg4 == "1")
+                                                    {
+                                                        price2 = "World lock"
+                                                    }
+
+                                                    else
+                                                    {
+                                                        price2 = "World locks"
+                                                    }
+
                                                     console.log(`[IE_LOG] DQ POST DETECTED\nExecuter = ${User.tag} \nDaily quest = ${msg1} & ${msg2}\nDate = ${currentdate.toLocaleDateString()} at ${currentdate.toLocaleTimeString()}\n`)
 
                                                     message.client.channels.cache.get(config.dqChannel).send(
@@ -156,10 +179,11 @@ client.on('message', async message => {
                                                             .setColor("#32a856")
                                                             .setAuthor('Daily Quest announcement | click here to report a problem', 'https://cdn.discordapp.com/attachments/986649997128904775/1035866267875278848/1035606248902631554.webp', 'https://ptb.discord.com/channels/571992648190263317/994294684874715146/1001014705655124039')
                                                             .setDescription(`**WARNING**: Check the names of the items you'll be exchanging your wls for; it's a **Common Scam** to buy items or blocks that are the same color as the DQ requirement but have different names. so kindly check your trades before accepting.`)
-                                                            .addField("<:Info:1035902879099269210> Today daily quest is:", "**"+ msg1 + "**" + " For **" + msg3 + "** World Locks"+ "\n" + "**" + msg2 + "**" + " for **" + msg4 + "** World locks", true)
-                                                            .addField("<:Info:1035902879099269210> Role Day", roleDay, true)
+                                                            .addField("<:Info:1035902879099269210> Today daily quest is:", "**"+ msg1 + "**" + " For **" + msg3 + "** " + price1 + "\n" + "**" + msg2 + "**" + " for **" + msg4 + "** " + price2, true)      
+                                                            .addField("<:Info:1035902879099269210> Today\s Date:", currentdate.toLocaleDateString(), true)
                                                             .addField("<:Info:1035902879099269210> Estimated final price", + toString(estprice) + " <:WL:1035605013222924288>", true)
                                                             .addField("<:Info:1035902879099269210> Price prediction", RiseDrop, true)
+                                                            .addField("<:Info:1035902879099269210> Role Day", roleDay, true)
                                                             .setTimestamp()
                                                             .setFooter(`The Lost Nemo! | generated by ${User.tag} | To submit your Daily Quest, dial 12345 using a telephone.`, "https://media.discordapp.net/attachments/986677752314859526/999442036342145097/Growpedia.png?width=868&height=905")
                                                     )//.then(message.crosspost()).catch(console.error());
