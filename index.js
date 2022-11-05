@@ -2,6 +2,8 @@ const Discord = require('discord.js')
 
 const client = new Discord.Client()
 
+const beta = new Boolean(false);
+
 const config = require('./utils/config.json')
 const gt = require('growtopia-details')
 const currentdate = new Date();
@@ -12,18 +14,30 @@ client.on('ready', () => {
 })
 
 client.on('message', async message => {
+    
+    if(message.channel.type === "news")
+        {
+            message.crosspost().then(
+                console.log(`message published!`),
+            ).catch(console.error);
+        } 
+
+    if(message.channel.type === "dm" && !message.author.bot)
+    {
+        message.reply(`Commands through DMs are not supported anymore`);
+        return;
+    }
 
     let args = message.content.trim().split(/ +/g);
     let command = args[0].slice(config.prefix.length).toLowerCase();
 
-
     let questions = {
-        firstQuestion: "what is the first daily quest item? ",
-        secondQuestion: "what is the second daily quest item?",
-        thirdQuestion: "what is the first item's price (in world locks)? [must be a number]",
-        fourthQuestion:  "what is the second item's price (in world locks)? [must be a number]",
-        fifthQuestion: "price prediction? [\`rising/dropping/stable\`]",
-        sixthQuestion: "What role day is it?",
+        q1: "what is the first daily quest item? ",
+        q2: "what is the second daily quest item?",
+        q3: "what is the first item's price (in world locks)? [must be a number]",
+        q4:  "what is the second item's price (in world locks)? [must be a number]",
+        q5: "price prediction? [\`rising/dropping/stable\`]",
+        q6: "What role day is it?",
     }
 
     let cotdquestions = {
@@ -37,55 +51,58 @@ client.on('message', async message => {
 
     if (!message.content.startsWith(config.prefix) || message.author.bot) return
     if (command === "dq") {
+
+        if(!message.member.roles.cache.some(role => role.name === "DQ Announcer")) { console.log("missing role"); return; };
+
         message.channel.send("[Daily quest] alright let's start. Type `cancel` to cancel")
-        message.channel.send(questions.firstQuestion).then(msg => {
+        message.channel.send(questions.q1).then(msg => {
             const filter1 = m => m.author.id === message.author.id
             msg.channel.awaitMessages(filter1, {
                 time: 5 * 60000,
                 max: 1
             }).then(messages => {
                 let msg1 = messages.first().content
-                if(msg1.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                message.channel.send(questions.secondQuestion).then(msg => {
+                if(msg1.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
+                message.channel.send(questions.q2).then(msg => {
                     const filter1 = m => m.author.id === message.author.id
                     msg.channel.awaitMessages(filter1, {
                         time: 5 * 60000,
                         max: 1
                     }).then(messages => {
                         let msg2 = messages.first().content
-                        if(msg2.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                        message.channel.send(questions.thirdQuestion).then(msg => {
+                        if(msg2.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
+                        message.channel.send(questions.q3).then(msg => {
                             const filter1 = m => m.author.id === message.author.id
                             msg.channel.awaitMessages(filter1, {
                                 time: 5 * 60000,
                                 max: 1
                             }).then(messages => {
                                 let msg3 = messages.first().content
-                                if(msg3.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                message.channel.send(questions.fourthQuestion).then(msg => {
+                                if(msg3.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
+                                message.channel.send(questions.q4).then(msg => {
                                     const filter1 = m => m.author.id === message.author.id
                                     msg.channel.awaitMessages(filter1, {
                                         time: 5 * 60000,
                                         max: 1
                                     }).then(messages => {
                                         let msg4 = messages.first().content
-                                        if(msg4.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                        message.channel.send(questions.fifthQuestion).then(msg => {
+                                        if(msg4.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
+                                        message.channel.send(questions.q5).then(msg => {
                                             const filter1 = m => m.author.id === message.author.id
                                             msg.channel.awaitMessages(filter1, {
                                                 time: 5 * 60000,
                                                 max: 1
                                             }).then(messages => {
                                                 let msg5 = messages.first().content
-                                                if(msg5.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
-                                                message.channel.send(questions.sixthQuestion).then(msg => {
+                                                if(msg5.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
+                                                message.channel.send(questions.q6).then(msg => {
                                                     const filter1 = m => m.author.id === message.author.id
                                                     msg.channel.awaitMessages(filter1, {
                                                         time: 5 * 60000,
                                                         max: 1
                                                     }).then(messages => {
                                                 let msg6 = messages.first().content
-                                                if(msg6.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
+                                                if(msg6.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
                                                 message.channel.send("Daily quest posted! thanks for contributing").then(msg => {
                                                     prc1 = parseInt(msg3, 10);
                                                     prc2 = parseInt(msg4, 10);
@@ -95,6 +112,7 @@ client.on('message', async message => {
                                                     roleDay = ""
                                                     price1 = ""
                                                     price2 = ""
+                                                    turnout = ""
                                                     risedropInput = msg5.toLowerCase();
                                                     roledayInput = msg6.toLowerCase();
 
@@ -103,6 +121,7 @@ client.on('message', async message => {
                                                     {
                                                         RiseDrop = "<:ExcellentGT:1035604258650869931> slowly Rising"
                                                     }
+
                                                     else if(risedropInput == "dropping")
                                                     {
                                                         RiseDrop = "<:Very_poor:1035604418403516446> slowly Dropping"
@@ -116,6 +135,21 @@ client.on('message', async message => {
                                                     else
                                                     {
                                                         RiseDrop = "<:AverageGT:1035611586578104320> unsure"
+                                                    }
+
+                                                    if(risedropInput == "rising" && estprice <= 15)
+                                                    {
+                                                        turnout = "<:ExcellentGT:1035604258650869931> High Turnout"
+                                                    }
+        
+                                                    else if(risedropInput == "dropping" && estprice >= 15)
+                                                    {
+                                                        turnout = "<:Very_poor:1035604418403516446>  Low Turnout"
+                                                    }
+
+                                                    else
+                                                    {
+                                                        turnout = "<:AverageGT:1035611586578104320> Unsure Turnout"
                                                     }
 
                                                     //roleday presets
@@ -136,7 +170,7 @@ client.on('message', async message => {
 
                                                     else if(roledayInput == "cooking" || roledayInput == "chef")
                                                     {
-                                                        roleDay = "<:Chef:1035872661340946454> Chef"
+                                                        roleDay = "<:Chef:1038402969319776328> Chef"
                                                     }
 
                                                     else if(roledayInput == "fish" || roledayInput == "fishing")
@@ -146,7 +180,7 @@ client.on('message', async message => {
 
                                                     else if(roledayInput == "star" || roledayInput == "startopia")
                                                     {
-                                                        roleDay = "<:startopia:1035872660153958410> Startopia"
+                                                        roleDay = "<:Star:1038402967725953074> Startopia"
                                                     }
 
                                                     else if(roledayInput == "jack" || roledayInput == "joat" || roledayInput == "jack of all trades")
@@ -180,29 +214,50 @@ client.on('message', async message => {
                                                         price2 = "World locks"
                                                     }
 
-                                                    const itemLink1 = `https://growtopia.fandom.com/wiki/${msg1}`
-                                                    const itemLink2 = `https://growtopia.fandom.com/wiki/${msg2}`
+                                                    forbiddenWords = ["seed", "seeds", "Seed", "Seeds"];
+
+                                                    const linkitem1 = msg1.split(' ').slice(1).join(' ');
+
+                                                    if(toString(linkitem1).toLowerCase().includes(forbiddenWords))
+                                                    {
+                                                        linkitem1 = toString(linkitem1).replace(forbiddenWords, "")
+                                                    }
+
+                                                    const linkitem2 = msg2.split(' ').slice(1).join(' ');
+
+                                                    if(toString(linkitem2).toLowerCase().includes(forbiddenWords))
+                                                    {
+                                                        linkitem2 = toString(linkitem2).replace(forbiddenWords, "")
+                                                    }
+
+                                                    const itemLink1 = `https://growtopia.fandom.com/wiki/${linkitem1}`
+                                                    itemLink1.replace(" ", "_")
+                                                    const itemLink2 = `https://growtopia.fandom.com/wiki/${linkitem2}`
+                                                    itemLink2.replace(" ", "_")
 
                                                     console.log(`[IE_LOG] DQ POST DETECTED\nExecuter = ${User.tag} \nDaily quest = ${msg1} & ${msg2}\nDate = ${currentdate.toLocaleDateString()} at ${currentdate.toLocaleTimeString()}\n`)
 
                                                     message.client.channels.cache.get(config.dqChannel).send(
                                                         new Discord.MessageEmbed()
-                                                            .setColor("#32a856")
-                                                            .setAuthor('Daily Quest announcement | click here to report a problem', 'https://cdn.discordapp.com/attachments/986649997128904775/1035866267875278848/1035606248902631554.webp', 'https://ptb.discord.com/channels/571992648190263317/994294684874715146/1001014705655124039')
-                                                            .setDescription(`**WARNING**: Check the names of the items you'll be exchanging your wls for; it's a **Common Scam** to buy items or blocks that are the same color as the DQ requirement but have different names. so kindly check your trades before accepting.`)
-                                                            .addField("<:Info:1035902879099269210> Today daily quest is:", "**"+ `[${msg1}](${itemLink1})` + "**" + " For **" + msg3 + "** " + price1 + "\n" + "**" + `[${msg2}](${itemLink2})` + "**" + " for **" + msg4 + "** " + price2, true)      
-                                                            .addField("<:Info:1035902879099269210> Today\s Date:", currentdate.toLocaleDateString(), true)
+                                                            .setColor("#2f3136")
+                                                            .setAuthor('Daily Quest announcement | click here to report a problem', 'https://cdn.discordapp.com/emojis/994348750900301865.webp?size=44&quality=lossless', 'https://ptb.discord.com/channels/571992648190263317/994294684874715146/1001014705655124039')
+                                                            .setDescription(`<:warning1:1038446317795549186> **WARNING**: Check the names of the items you'll be exchanging your wls for; it's a **Common Scam** to buy items or blocks that are the same color as the DQ requirement but have different names.\n<:warning1:1038446317795549186> so kindly check your trades before accepting.\n** **`)
+                                                            .addField("<:Info:1035902879099269210> Today daily quest is:", "**"+ `[${msg1}](${itemLink1.replace(" ", "_").replace(`Seed`, "").replace(`Seeds`, "").replace(`seed`, "").replace(`seeds`, "")})` + "**" + " For **" + msg3 + "** " + price1 + "\n" + "**" + `[${msg2}](${itemLink2.replace(" ", "_").replace(`Seed`, "").replace(`Seeds`, "").replace(`seed`, "").replace(`seeds`, "")})` + "**" + " for **" + msg4 + "** " + price2, true)      
+                                                            .addField("<:Info:1035902879099269210> Today\s Date:", `<t:${Math.floor(Date.now()/1000)}:D>`, true)
                                                             .addField("<:Info:1035902879099269210> Estimated final price", + estprice.toString() + " <:WL:1035605013222924288>", true)
                                                             .addField("<:Info:1035902879099269210> Price prediction", RiseDrop, true)
+                                                            .addField("<:Info:1035902879099269210> Turnout", turnout, true)
                                                             .addField("<:Info:1035902879099269210> Role Day", roleDay, true)
+                                                            .addField("** **", "<:arrowsign:1038447420297728040> Make sure to check the channel: <#1037218161738657803>\n<:arrowsign:1038447420297728040> The price of daily quests items are subject to change based on demand\n<:growlectables:1038448855466909777> Remember to consume Growlectables, which gives: 25% chance of double <:Gtoken:1038449359727099965>")
+                                                            .addField("<:increase:1038447422923341924> Source:", "<:correct:1038447421606350909> BUYDQ, BUYDAILYQUEST")
                                                             .setTimestamp()
-                                                            .setFooter(`The Lost Nemo! | generated by ${User.tag} | To submit your Daily Quest, dial 12345 using a telephone.`, "https://media.discordapp.net/attachments/986677752314859526/999442036342145097/Growpedia.png?width=868&height=905")
-                                                    )//.then(message.crosspost()).catch(console.error());
+                                                            .setFooter(`The Lost Nemo! | To submit your Daily Quest, dial 12345 using a telephone. | generated by ${message.author.tag}`, "https://cdn.discordapp.com/attachments/986677752314859526/999490400832204800/jackofalltrades.png")
+                                                            )
 
                                                     if(estprice <= 15)
                                                     {
                                                         message.client.channels.cache.get(config.dqChannel).send(
-                                                            `[ <@&975119737304522803> ]\ntoday's daily quest is only **${estprice.toString()}** <:WL:1035605013222924288>!\n🔹 If you desire to be pinged for Future Cheap Daily-Quests, go to <#1036129152455159812> and react to the <@&975119737304522803> role to get notified of all future :ExcellentGT: High Turnout DQ.\nℹ️ Make sure to get your daily-quest items from <#1036129152455159812> as well.\nHave a wonderful day. :ihheart:`
+                                                            `[ <@&1038417779646279751> ]\ntoday's daily quest is only **${estprice.toString()}** <:WL:1035605013222924288>!\n🔹 If you desire to be pinged for Future Cheap Daily-Quests, go to <#1036129152455159812> and react to the <@&975119737304522803> role to get notified of all future <:ExcellentGT:1035604258650869931> High Turnout DQ.\nℹ️ Make sure to get your daily-quest items from <#1036129152455159812> as well.\nHave a wonderful day.`
                                                         )
                                                     }
                                                 })
@@ -221,6 +276,9 @@ client.on('message', async message => {
     }
 
     if (command === "cotd") {
+
+        if(!message.member.roles.cache.some(role => role.name === "COTD Announcer")) { console.log("missing role"); return; };
+
         message.channel.send("[COTD] alright let's start. Type `cancel` to cancel")
         message.channel.send(cotdquestions.firstQuestion).then(msg => {
             const filter1 = m => m.author.id === message.author.id
@@ -229,7 +287,7 @@ client.on('message', async message => {
                 max: 1
             }).then(messages => {
                 let msg1 = messages.first().content
-                if(msg1.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
+                if(msg1.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
                 message.channel.send(cotdquestions.secondQuestion).then(msg => {
                     const filter1 = m => m.author.id === message.author.id
                     msg.channel.awaitMessages(filter1, {
@@ -237,7 +295,7 @@ client.on('message', async message => {
                         max: 1
                     }).then(messages => {
                         let msg2 = messages.first().content
-                        if(msg2.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
+                        if(msg2.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
                         message.channel.send(cotdquestions.thirdQuestion).then(msg => {
                             const filter1 = m => m.author.id === message.author.id
                             msg.channel.awaitMessages(filter1, {
@@ -245,7 +303,7 @@ client.on('message', async message => {
                                 max: 1
                             }).then(messages => {
                                 let msg3 = messages.first().content
-                                if(msg3.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
+                                if(msg3.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
                                 message.channel.send(cotdquestions.fourthQuestion).then(msg => {
                                     const filter1 = m => m.author.id === message.author.id
                                     msg.channel.awaitMessages(filter1, {
@@ -253,7 +311,7 @@ client.on('message', async message => {
                                         max: 1
                                     }).then(messages => {
                                         let msg4 = messages.first().content
-                                        if(msg4.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
+                                        if(msg4.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
                                         message.channel.send(cotdquestions.fifthQuestion).then(msg => {
                                             const filter1 = m => m.author.id === message.author.id
                                             msg.channel.awaitMessages(filter1, {
@@ -261,7 +319,7 @@ client.on('message', async message => {
                                                 max: 1
                                             }).then(messages => {
                                                 let msg5 = messages.first().content
-                                                if(msg5.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
+                                                if(msg5.toLowerCase() === "cancel") return message.channel.send("Ok, I have cancelled this process")
                                                 message.channel.send("Catch of the day posted! thanks for contributing").then(msg => {
                                                     const estprice = parseInt(msg3) + parseInt(msg4);
                                                     const User = client.users.cache.get(message.author.id); 
@@ -330,11 +388,32 @@ client.on('message', async message => {
                                                         fishBaits = "<:Salmonegg:1036315383289872494> <:Fishingfly:1036315514231853137> <:Shrimplure:1036315402977947738> <:Whizmogizmo:1036317202678304848>";
                                                     }
 
-                                                    else if(fishInput == "mahi mahi")
+                                                    else if(fishInput == "mahi mahi" || fishInput == "mahi" || fishInput == "mahimahi")
                                                     {
                                                         todaysFish = "<:Mahimahi:1035862077581045840> Mahi Mahi";
                                                         fishLink = "https://growtopia.fandom.com/wiki/Mahi_Mahi";
                                                         fishBaits = "<:Wigglyworm:1036315422208823297> <:Shrimplure:1036315402977947738> <:Whizmogizmo:1036317202678304848>";
+                                                    }
+                                                    
+                                                    else if(fishInput == "catfish")
+                                                    {
+                                                        todaysFish = "<:Catfish:1038464731062730772> Catfish";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Catfish";
+                                                        fishBaits = "<:Wigglyworm:1036315422208823297> <:Shrimplure:1036315402977947738> <:Whizmogizmo:1036317202678304848>";
+                                                    }
+
+                                                    else if(fishInput == "orca")
+                                                    {
+                                                        todaysFish = "<:Orca:1038489431532912671> Orca";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Orca";
+                                                        fishBaits = "<:cotd:1036315453787734056>";
+                                                    }
+
+                                                    else if(fishInput == "mutant fish" || fishInput === "mutant" || fishInput === "mutantfish")
+                                                    {
+                                                        todaysFish = "<:Mutantfish:1038489452621877308> Mutant Fish";
+                                                        fishLink = "https://growtopia.fandom.com/wiki/Mutant_Fish";
+                                                        fishBaits = "<:cotd:1036315453787734056>";
                                                     }
 
                                                     else if(fishInput == "goldfish")
@@ -363,20 +442,20 @@ client.on('message', async message => {
 
                                                     message.client.channels.cache.get(config.cotdChannel).send(
                                                         new Discord.MessageEmbed()
-                                                            .setColor("#bf6d1b")
-                                                            .setAuthor('Catch-Of-The-Day announcement | click here to report a problem', 'https://cdn.discordapp.com/attachments/986649997128904775/1035866110983151636/1035817530972975167.webp', 'https://ptb.discord.com/channels/571992648190263317/994294684874715146/1001014705655124039')
+                                                            .setColor("#2f3136")
+                                                            .setAuthor('CATCH-OF-THE-DAY ANNOUNCEMENTS! | click here to report a problem', 'https://cdn.discordapp.com/attachments/986649997128904775/1035866110983151636/1035817530972975167.webp', 'https://ptb.discord.com/channels/571992648190263317/994294684874715146/1001014705655124039')
                                                             .setURL('https://ptb.discord.com/channels/571992648190263317/994294684874715146/1001014705655124039')
                                                             .setDescription(``)
-                                                            .addField("Today\s COTD is:", `[${todaysFish}](${fishLink})`, true)
-                                                            .addField("Today\s Date:", currentdate.toLocaleDateString(), true)
-                                                            .addField("Estimated fish price:", `Normal lb for ${msg4} / <:WL:1035605013222924288>\nPerfect lb for ${msg3} / <:WL:1035605013222924288>`, true)
-                                                            .addField("Obtainable with",fishBaits, true)
-                                                            .addField(`Status of fish`, `${Trainable}`,true)
-                                                            .addField("Rate of demand", RiseDrop, true)
+                                                            .addField("<:Info:1035902879099269210> Today\s COTD is:", `[${todaysFish}](${fishLink})`, true)
+                                                            .addField("<:Info:1035902879099269210> Today\s Date:", `<t:${Math.floor(Date.now()/1000)}:D>`, true)
+                                                            .addField("<:Info:1035902879099269210> Estimated fish price:", `Normal lb for ${msg4} / <:WL:1035605013222924288>\nPerfect lb for ${msg3} / <:WL:1035605013222924288>`, true)
+                                                            .addField("<:Info:1035902879099269210> Obtainable with",fishBaits, true)
+                                                            .addField(`<:Info:1035902879099269210> Status of fish`, `${Trainable}`,true)
+                                                            .addField("<:Info:1035902879099269210> Rate of demand", RiseDrop, true)
                                                             .addField("<a:bell:1036284896253063198> Important Subjects:", `[**Fishes info**](https://growtopia.fandom.com/wiki/Fishes) | [**Fishing Rods guideline**](https://growtopia.fandom.com/wiki/Guide:Fishing/Fishing_Rods) | [**Fish Nutrition**](https://growtopia.fandom.com/wiki/Guide:Fish_Training)`, true)
                                                             .setTimestamp()
-                                                            .setFooter(`The price of fish is subject to change based on demand | generated by ${User.tag}`, "https://media.discordapp.net/attachments/986677752314859526/999442036342145097/Growpedia.png?width=868&height=905")
-                                                    )//.then(message.crosspost()).catch(console.error());
+                                                            .setFooter(`The price of fish is subject to change based on demand | generated by ${User.tag}`, "https://cdn.discordapp.com/emojis/1036258778527584296.webp?size=96&quality=lossless")
+                                                    )
                                                 })
                                             })
                                         })
@@ -413,9 +492,18 @@ client.on('message', async message => {
 
     if(command==="event")
     {
-        eventInput = args[1].toLowerCase();
+
+        if(!message.member.roles.cache.some(role => role.name === "DQ Announcer")) { console.log("missing role"); return; };
+
+        eventInput = args[1]?.toLowerCase();
      
-        if (!args[1]) 
+
+        if(eventInput == "")
+        {
+            return;
+        }
+
+        if (!eventInput) 
         {
             message.channel.send('Please specify an event. here\'s a list of possible events:\n\`\`\`\nlocke,\ncomet,\ncarnival,\ntournament,\ngeiger,\nsurgery,\nhowl,\nghost,\nmutant,\npandemic,\nvoucher\`\`\`');
         }
@@ -466,6 +554,13 @@ client.on('message', async message => {
         const annChannel = message.mentions.channels.first();
         const annMessage = message.content.split(' ').slice(2).join(' ');
 
+        if(!message.member.roles.cache.some(role => role.name === "Moderator")) 
+        { 
+            console.log("missing role"); 
+            return; 
+        };
+
+
         if(!args[1])
         {
             message.channel.send(`Missing an argument: \`annChannel\`, please input a channl to send the message in\nsyntax: ${config.prefix}announce [channel] [message]`)
@@ -507,4 +602,11 @@ client.on('message', async message => {
     }
 })
 
-client.login(config.token)
+if(beta == true)
+{
+    client.login(config.betaToken)
+}
+else 
+{
+    client.login(config.token)
+}
