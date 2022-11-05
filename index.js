@@ -3,6 +3,7 @@ const Discord = require('discord.js')
 const client = new Discord.Client()
 
 const config = require('./utils/config.json')
+const gt = require('growtopia-details')
 const currentdate = new Date();
 client.on('ready', () => {
     console.log(`Current date: ` + currentdate.toLocaleDateString())
@@ -12,8 +13,8 @@ client.on('ready', () => {
 
 client.on('message', async message => {
 
-    let args = message.content.slice(config.prefix.length).trim().split(/ +/)
-    let command = args.shift().toLowerCase()
+    let args = message.content.trim().split(/ +/g);
+    let command = args[0].slice(config.prefix.length).toLowerCase();
 
 
     let questions = {
@@ -21,7 +22,7 @@ client.on('message', async message => {
         secondQuestion: "what is the second daily quest item?",
         thirdQuestion: "what is the first item's price (in world locks)? [must be a number]",
         fourthQuestion:  "what is the second item's price (in world locks)? [must be a number]",
-        fifthQuestion: "price prediction? [rising or dropping?]",
+        fifthQuestion: "price prediction? [\`rising/dropping/stable\`]",
         sixthQuestion: "What role day is it?",
     }
 
@@ -86,7 +87,9 @@ client.on('message', async message => {
                                                 let msg6 = messages.first().content
                                                 if(msg6.toLowerCase() === "cancel") return message.author.send("Ok, I have cancelled this process")
                                                 message.channel.send("Daily quest posted! thanks for contributing").then(msg => {
-                                                    const estprice = parseInt(msg3) + parseInt(msg4);
+                                                    prc1 = parseInt(msg3, 10);
+                                                    prc2 = parseInt(msg4, 10);
+                                                    const estprice = prc1 + prc2;
                                                     const User = client.users.cache.get(message.author.id); 
                                                     RiseDrop = ""
                                                     roleDay = ""
@@ -98,12 +101,18 @@ client.on('message', async message => {
                                                     //turnout presets
                                                     if(risedropInput == "rising")
                                                     {
-                                                        RiseDrop = "<:ExcellentGT:1035604258650869931> Rising"
+                                                        RiseDrop = "<:ExcellentGT:1035604258650869931> slowly Rising"
                                                     }
                                                     else if(risedropInput == "dropping")
                                                     {
-                                                        RiseDrop = "<:Very_poor:1035604418403516446> dropping"
+                                                        RiseDrop = "<:Very_poor:1035604418403516446> slowly Dropping"
                                                     }
+
+                                                    else if(risedropInput == "stable")
+                                                    {
+                                                        RiseDrop = ":bar_chart: Stable"
+                                                    }
+
                                                     else
                                                     {
                                                         RiseDrop = "<:AverageGT:1035611586578104320> unsure"
@@ -171,6 +180,9 @@ client.on('message', async message => {
                                                         price2 = "World locks"
                                                     }
 
+                                                    const itemLink1 = `https://growtopia.fandom.com/wiki/${msg1}`
+                                                    const itemLink2 = `https://growtopia.fandom.com/wiki/${msg2}`
+
                                                     console.log(`[IE_LOG] DQ POST DETECTED\nExecuter = ${User.tag} \nDaily quest = ${msg1} & ${msg2}\nDate = ${currentdate.toLocaleDateString()} at ${currentdate.toLocaleTimeString()}\n`)
 
                                                     message.client.channels.cache.get(config.dqChannel).send(
@@ -178,14 +190,21 @@ client.on('message', async message => {
                                                             .setColor("#32a856")
                                                             .setAuthor('Daily Quest announcement | click here to report a problem', 'https://cdn.discordapp.com/attachments/986649997128904775/1035866267875278848/1035606248902631554.webp', 'https://ptb.discord.com/channels/571992648190263317/994294684874715146/1001014705655124039')
                                                             .setDescription(`**WARNING**: Check the names of the items you'll be exchanging your wls for; it's a **Common Scam** to buy items or blocks that are the same color as the DQ requirement but have different names. so kindly check your trades before accepting.`)
-                                                            .addField("<:Info:1035902879099269210> Today daily quest is:", "**"+ msg1 + "**" + " For **" + msg3 + "** " + price1 + "\n" + "**" + msg2 + "**" + " for **" + msg4 + "** " + price2, true)      
+                                                            .addField("<:Info:1035902879099269210> Today daily quest is:", "**"+ `[${msg1}](${itemLink1})` + "**" + " For **" + msg3 + "** " + price1 + "\n" + "**" + `[${msg2}](${itemLink2})` + "**" + " for **" + msg4 + "** " + price2, true)      
                                                             .addField("<:Info:1035902879099269210> Today\s Date:", currentdate.toLocaleDateString(), true)
-                                                            .addField("<:Info:1035902879099269210> Estimated final price", + toString(estprice) + " <:WL:1035605013222924288>", true)
+                                                            .addField("<:Info:1035902879099269210> Estimated final price", + estprice.toString() + " <:WL:1035605013222924288>", true)
                                                             .addField("<:Info:1035902879099269210> Price prediction", RiseDrop, true)
                                                             .addField("<:Info:1035902879099269210> Role Day", roleDay, true)
                                                             .setTimestamp()
                                                             .setFooter(`The Lost Nemo! | generated by ${User.tag} | To submit your Daily Quest, dial 12345 using a telephone.`, "https://media.discordapp.net/attachments/986677752314859526/999442036342145097/Growpedia.png?width=868&height=905")
                                                     )//.then(message.crosspost()).catch(console.error());
+
+                                                    if(estprice <= 15)
+                                                    {
+                                                        message.client.channels.cache.get(config.dqChannel).send(
+                                                            `[ <@&975119737304522803> ]\ntoday's daily quest is only **${estprice.toString()}** <:WL:1035605013222924288>!\n🔹 If you desire to be pinged for Future Cheap Daily-Quests, go to <#1036129152455159812> and react to the <@&975119737304522803> role to get notified of all future :ExcellentGT: High Turnout DQ.\nℹ️ Make sure to get your daily-quest items from <#1036129152455159812> as well.\nHave a wonderful day. :ihheart:`
+                                                        )
+                                                    }
                                                 })
                                             })
                                         })
@@ -376,14 +395,111 @@ client.on('message', async message => {
         message.channel.send(`pong!\nClient latency is: ${Date.now() - message.createdTimestamp}ms\nAPI latency is: ${Math.round(client.ws.ping)}ms`);
     }
 
+    if(command==="gtdetails")
+    {
+        gt.getDetail().then(e=>{
+            const detailEmbed = new Discord.MessageEmbed()
+            .setColor('#0099ff')
+            .setAuthor('Growtopia Server details', 'https://cdn.discordapp.com/attachments/844794142248402964/1038087094666535042/691380522651353140.webp', `${e.worldOfDay.renderURL}`)
+            .addField(`Players online:`, `${e.onlineUsersCount}`)
+            .addField(`<:gtWotd:1038086851803762738> Today's World Of The Day: **${e.worldOfDay.worldName}**`, e.worldOfDay.renderURL)
+            .setImage(e.worldOfDay.renderURL)
+            .setFooter('Powered by ${IE.version}')
+            .setTimestamp()
+
+            message.channel.send(detailEmbed);
+        }) 
+    }
+
+    if(command==="event")
+    {
+        eventInput = args[1].toLowerCase();
+     
+        if (!args[1]) 
+        {
+            message.channel.send('Please specify an event. here\'s a list of possible events:\n\`\`\`\nlocke,\ncomet,\ncarnival,\ntournament,\ngeiger,\nsurgery,\nhowl,\nghost,\nmutant,\npandemic,\nvoucher\`\`\`');
+        }
+        if(eventInput == "locke")
+        {
+            message.client.channels.cache.get(config.cotdChannel).send(
+            new Discord.MessageEmbed()
+            .setColor('#b825f7')
+            .setAuthor('The travelin salesman is here', 'https://images-ext-2.discordapp.net/external/sjYlB3zBRd51UfOoLsvcgmU_28eiqJhZKZ6dK72vsW0/https/i.imgur.com/6Npk2XT.png')
+            .setDescription('Every 10 minutes Locke visits a different Growtopia world! If you can figure out where he is, go visit him to purchase some cool items! You can also ask Locke questions about any items in Growtopia.')
+            .setFooter('This event lasts for 1 day!', 'https://cdn.discordapp.com/emojis/781317514944053268.webp?size=96&quality=lossless')
+            .setTimestamp()
+
+        )}
+
+        if(eventInput == "comet")
+        {
+            message.client.channels.cache.get(config.cotdChannel).send(
+            new Discord.MessageEmbed()
+            .setColor('#42f557')
+            .setAuthor('It\'s night of the comet', 'https://images-ext-1.discordapp.net/external/yo9RcA7UVh9b1beWqK6JWn2WOb5t0Rd_DkDe8o05mm4/https/i.imgur.com/SdF52CV.png')
+            .setDescription('What\'s that in the sky?? A Comet is blazing a trail through the night! It will only be here for 24 hours...')
+            .setFooter('This event lasts for 1 day!', 'https://images-ext-1.discordapp.net/external/jF50KiRtj-TyXizAACeTPkPa8BfWD-ZChkdevjO7EqM/https/i.imgur.com/XBGLbHd.png')
+            .setTimestamp()
+
+        )}
+
+        if(eventInput == "carnival")
+        {
+            message.client.channels.cache.get(config.cotdChannel).send(
+            new Discord.MessageEmbed()
+            .setColor('#bd3f19')
+            .setAuthor('The carnival has arrived!', 'https://cdn.discordapp.com/emojis/603228426534649857.gif?size=96&quality=lossless')
+            .setDescription(`Visit the world CARNIVAL! try your luck at winning one of the ringmasters fabulous rings, or play some fun games to win some exclusive Carnival items!\nThis event will last through <t:${Math.floor(Date.now()/1000)}:D> to <t:${Math.floor((Date.now()/1000)+ 259200)}:D>`)
+            .setFooter('This event lasts for 3 days!', 'https://cdn.discordapp.com/attachments/844794142248402964/1038385854151929946/unknown.png')
+            .setTimestamp()
+
+        )}
+
+        else
+        {
+            message.reply(`This event is unavailable/Doesn't exist`)
+        }
+    }
+
+    if(command==="announce" || command === "ann")
+    {
+        const annChannel = message.mentions.channels.first();
+        const annMessage = message.content.split(' ').slice(2).join(' ');
+
+        if(!args[1])
+        {
+            message.channel.send(`Missing an argument: \`annChannel\`, please input a channl to send the message in\nsyntax: ${config.prefix}announce [channel] [message]`)
+            return;
+        }
+
+        if(!args[2])
+        {
+            message.channel.send(`Missing an argument: \`annMessage\`, please input a channl to send the message in\nsyntax: ${config.prefix}announce [channel] [message]`)
+            return;
+        }
+
+        message.guild.channels.cache.find(t => t.id == annChannel.id).send(
+            new Discord.MessageEmbed()
+            .setColor('#3903fc')
+            .setAuthor('News Announcement!', 'https://cdn.discordapp.com/emojis/691300583625326592.webp?size=96&quality=lossless')
+            .setDescription(`${annMessage}`)
+            .setFooter(`This announcement was sent by ${message.author.tag}`)
+            .setTimestamp()
+        )
+        message.channel.send(`The message has been announced`);
+    }
+
     if(command==="help")
     {
        const helpEmbed = new Discord.MessageEmbed()
             .setTitle('<:Yaki:993969426162532363> YakiBot\'s help menu')
             .setColor("#212121")
             .setDescription(`My prefix is ${config.prefix}`)
+            .addField(`${config.prefix}gtdetails`,"Sends the amount of players online and today\'s WOTD\n> Category: 'Growtopia'")
             .addField(`${config.prefix}dq`, "Begin the daily quest announcement generator.\n> Category: 'Growtopia'\n> Required Role: <@&999121968823549962>")
             .addField(`${config.prefix}cotd`,"Begin the catch of the day announcement generator.\n> Category: 'Growtopia'\n> Required Role: <@&879756780513681428>")
+            .addField(`${config.prefix}event`,`Sends an announcement regarding a daily event.\n> Category: 'Growtopia'\n> Required Role: <@&999121968823549962>\n> Required args: [1] \n> Syntax: ${config.prefix}event [event]`)
+            .addField(`${config.prefix}announce`,`Send a custom announcement to a desired channel.\n> aliases: 'ann'\n> Category: 'Utility'\n> Required Role: <@&999121968823549962>\n> Required args: [2] \n> Syntax: ${config.prefix}announce [channel] [announcement]`)
             .addField(`${config.prefix}ping`, "Pong!\n> Category: 'Utility'")
             .setTimestamp()
             .setFooter(`YakiBot | bot created by YakiKaki#2271 | page 1/1`, "https://media.discordapp.net/attachments/986649997128904775/1035815040437194782/Y.png");
