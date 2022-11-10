@@ -1,7 +1,13 @@
 {
-    "token": "ODMxNjI5NjI3NTA3NzM2NjA2.YHYBcg.SRHgzWdPC_bUVgmX_zhbkXY2Vjk",
-    "betaToken": "MTAzNjY1MzEwNTc2NjQ3Nzg5NQ.GOzZTW.7DUvdatkoDWLrDJmSB3oNjAYYhWXPkIHGxn1dQ",
-    "prefix": "Y!",
-    "dqChannel":"1038457094497644564",
-    "cotdChannel":"1038457094497644564"
-  }
+  "token": "MTAzODQ2ODg4NTQ4MzEwMjI3OA.GjndIQ.zjNHJWP61q5eoPDt7RwAaYANnvPuXYmWEOwqPU",
+  "betaToken": "MTAzNjY1MzEwNTc2NjQ3Nzg5NQ.GOzZTW.7DUvdatkoDWLrDJmSB3oNjAYYhWXPkIHGxn1dQ",
+  "prefix": ">",
+  "dqChannel":"1038457094497644564",
+  "cotdChannel":"1038457094497644564",
+  "crashLog": "1038860418082426890",
+  "auditLog": "1038860393738666174",
+  "reportLog": "1038860471777890344",
+  "ModMail": "1039185648222998559",
+  "owner": "299791979514953728",
+  "teamChat": ""
+}
