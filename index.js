@@ -81,7 +81,7 @@ client.on('message', async message => {
     if (!message.content.startsWith(config.prefix) || message.author.bot) { return; }
 
     /* #region  the announcer questions */
-    let questions = {
+    let dqquestions = {
         q1: "what is the first daily quest item? ",
         q2: "what is the second daily quest item?",
         q3: "what is the first item's price (in world locks)? [must be a number]",
@@ -113,7 +113,7 @@ client.on('message', async message => {
             }).then(messages => {
                 let msg1 = messages.first().content
                 if (msg1.toLowerCase() === cancelInput) return message.channel.send("Ok, I have cancelled this process")
-                message.channel.send(questions.q2).then(msg => {
+                message.channel.send(dqquestions.q2).then(msg => {
                     const filter1 = m => m.author.id === message.author.id
                     msg.channel.awaitMessages(filter1, {
                         time: 5 * 60000,
@@ -121,7 +121,7 @@ client.on('message', async message => {
                     }).then(messages => {
                         let msg2 = messages.first().content
                         if (msg2.toLowerCase() === cancelInput) return message.channel.send("Ok, I have cancelled this process")
-                        message.channel.send(questions.q3).then(msg => {
+                        message.channel.send(dqquestions.q3).then(msg => {
                             const filter1 = m => m.author.id === message.author.id
                             msg.channel.awaitMessages(filter1, {
                                 time: 5 * 60000,
@@ -129,7 +129,7 @@ client.on('message', async message => {
                             }).then(messages => {
                                 let msg3 = messages.first().content
                                 if (msg3.toLowerCase() === cancelInput) return message.channel.send("Ok, I have cancelled this process")
-                                message.channel.send(questions.q4).then(msg => {
+                                message.channel.send(dqquestions.q4).then(msg => {
                                     const filter1 = m => m.author.id === message.author.id
                                     msg.channel.awaitMessages(filter1, {
                                         time: 5 * 60000,
@@ -137,7 +137,7 @@ client.on('message', async message => {
                                     }).then(messages => {
                                         let msg4 = messages.first().content
                                         if (msg4.toLowerCase() === cancelInput) return message.channel.send("Ok, I have cancelled this process")
-                                        message.channel.send(questions.q5).then(msg => {
+                                        message.channel.send(dqquestions.q5).then(msg => {
                                             const filter1 = m => m.author.id === message.author.id
                                             msg.channel.awaitMessages(filter1, {
                                                 time: 5 * 60000,
@@ -145,7 +145,7 @@ client.on('message', async message => {
                                             }).then(messages => {
                                                 let msg5 = messages.first().content
                                                 if (msg5.toLowerCase() === cancelInput) return message.channel.send("Ok, I have cancelled this process")
-                                                message.channel.send(questions.q6).then(msg => {
+                                                message.channel.send(dqquestions.q6).then(msg => {
                                                     const filter1 = m => m.author.id === message.author.id
                                                     msg.channel.awaitMessages(filter1, {
                                                         time: 5 * 60000,
