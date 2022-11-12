@@ -80,7 +80,7 @@ client.on('message', async message => {
     let command = args[0].slice(config.prefix.length).toLowerCase();
     if (!message.content.startsWith(config.prefix) || message.author.bot) { return; }
 
-    /* #region  the announcer questions */
+    /* #region  вопросы диктора */
     let dqquestions = {
         q1: "what is the first daily quest item? ",
         q2: "what is the second daily quest item?",
@@ -99,7 +99,7 @@ client.on('message', async message => {
     }
     /* #endregion */
 
-    /* #region  Daily Quest announce command */
+    /* #region  Daily Quest объявить команду */
     if (command === "dq") {
 
         if (!message.member.roles.cache.some(role => role.name === "DQ Announcer")) { console.log("missing role"); return; };
